@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Efficiently manage and track tobacco sales records with our Tobacco Ledger Management tool. View summaries including total bags, total price, and average price.">
+    <meta name="keywords" content="Tobacco Ledger Management, Tobacco Records,Sales Tracking,Summary Reports, Quantity Tracking,Price Calculation For TObacoo">
+    <meta name="author" content="MadhavaRaoChennareddy">
+
+
+    <title>Tobacco Nurseary Ledeger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        th,
+        td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #e0f7e9;
+        }
+        
+        tr:nth-child(odd) {
+            background-color: #f9fff7;
+        }
+        
+        tr:hover {
+            background-color: #c3e6cb;
+        }
+        /* Centered summary box */
+        
+        .summary-box {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            background-color: #f7fff7;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .summary-box h2 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        
+        .summary-box p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Tobacco Nurseary Ledeger</h1>
+    <table id="recordsTable">
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Date</th>
+                <th>Name or Village</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <div class="summary-box" id="summary">
+        <h2>Summary</h2>
+        <p>Total Bags: <span id="totalBags">0</span></p>
+        <p>Total Price: <span id="totalMoney">0</span></p>
+        <p>Average Price: <span id="averagePrice">0</span></p>
+    </div>
+
+    <script>
+        // Fetch data from the API
+        fetch('https://tobacoonurserybackend.onrender.com/records')
+            .then(response => response.json())
+            .then(data => {
+                const records = data.records;
+                const tbody = document.getElementById('recordsTable').getElementsByTagName('tbody')[0];
+                let totalBags = 0;
+                let totalMoney = 0;
+
+                // Insert rows and calculate total bags and total money
+                records.forEach(record => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).innerText = record.sno;
+                    row.insertCell(1).innerText = new Date(record.date).toLocaleDateString(); // Format date
+                    row.insertCell(2).innerText = record.nameOrVillage;
+                    row.insertCell(3).innerText = record.quantity;
+                    row.insertCell(4).innerText = record.price;
+                    row.insertCell(5).innerText = record.quantity * record.price; // Calculate Total Price
+
+                    // Update summary calculations
+                    totalBags += record.quantity;
+                    totalMoney += record.quantity * record.price;
+                });
+
+                // Calculate average price
+                const averagePrice = totalMoney / totalBags;
+
+                // Update summary section with calculated values
+                document.getElementById('totalBags').innerText = totalBags;
+                document.getElementById('totalMoney').innerText = totalMoney.toFixed(2);
+                document.getElementById('averagePrice').innerText = averagePrice.toFixed(2);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+
+</body>
+
+</html>
